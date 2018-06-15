@@ -63,11 +63,15 @@ func (c *Client) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	setXForwardedFor(r)
+	headers := utils.FromHeader(r.Header)
+
 	req := &httpgrpc.HTTPRequest{
 		Method:  r.Method,
 		Url:     r.RequestURI,
 		Body:    body,
-		Headers: utils.FromHeader(r.Header),
+		Headers: headers,
 	}
 
 	resp, err := c.client.Handle(r.Context(), req)
@@ -124,5 +128,17 @@ func ParseURL(unparsed string) (string, []grpc.DialOption, error) {
 
 	default:
 		return "", nil, fmt.Errorf("unrecognised scheme: %s", parsed.Scheme)
+	}
+}
+
+func setXForwardedFor(r *http.Request) {
+	if clientIP, _, err := net.SplitHostPort(r.RemoteAddr); err == nil {
+		// If we aren't the first proxy retain prior
+		// X-Forwarded-For information as a comma+space
+		// separated list and fold multiple headers into one.
+		if prior, ok := r.Header["X-Forwarded-For"]; ok {
+			clientIP = strings.Join(prior, ", ") + ", " + clientIP
+		}
+		r.Header.Set("X-Forwarded-For", clientIP)
 	}
 }
