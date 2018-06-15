@@ -10,8 +10,6 @@ import (
 
 	"github.com/musicglue/httpgrpc"
 	"github.com/musicglue/httpgrpc/utils"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // Server implements HTTPServer.  HTTPServer is a generated interface that gRPC
@@ -36,11 +34,6 @@ func (s Server) Handle(ctx context.Context, r *httpgrpc.HTTPRequest) (*httpgrpc.
 	req = req.WithContext(ctx)
 	utils.ToHeader(r.Headers, req.Header)
 	req.RequestURI = r.Url
-
-	log.Infof("received body length: %v", len(r.Body))
-	for k, v := range req.Header {
-		log.Infof("received header: %s -> %s", k, v)
-	}
 
 	recorder := httptest.NewRecorder()
 	s.handler.ServeHTTP(recorder, req)

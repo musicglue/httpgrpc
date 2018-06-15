@@ -32,7 +32,9 @@ func init() {
 // ToHeader turns a grpc header to a http header
 func ToHeader(hs []*httpgrpc.Header, header http.Header) {
 	for _, h := range hs {
-		header[h.Key] = h.Values
+		for _, v := range h.Values {
+			header.Add(h.Key, v)
+		}
 	}
 }
 
