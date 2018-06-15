@@ -55,5 +55,6 @@ func FromHeader(hs http.Header) []*httpgrpc.Header {
 			Values: vs,
 		})
 	}
+
 	return result
 }

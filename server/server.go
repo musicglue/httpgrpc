@@ -9,7 +9,8 @@ import (
 
 	"github.com/musicglue/httpgrpc"
 	"github.com/musicglue/httpgrpc/utils"
-	"github.com/musicglue/traefik/log"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Server implements HTTPServer.  HTTPServer is a generated interface that gRPC
