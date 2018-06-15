@@ -14,12 +14,10 @@ import (
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/mwitkow/go-grpc-middleware"
 	"github.com/opentracing/opentracing-go"
-	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"github.com/musicglue/httpgrpc"
 	"github.com/musicglue/httpgrpc/utils"
-	"github.com/weaveworks/common/user"
 )
 
 // Client is a http.Handler that forwards the request over gRPC.
@@ -30,15 +28,6 @@ type Client struct {
 	port      string
 	client    httpgrpc.HTTPClient
 	conn      *grpc.ClientConn
-}
-
-func clientUserHeaderInterceptor(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
-	ctx, err := user.InjectIntoGRPCRequest(ctx)
-	if err != nil {
-		return err
-	}
-
-	return invoker(ctx, method, req, reply, cc, opts...)
 }
 
 // New makes a new Client, given a kubernetes service address.
@@ -53,7 +42,6 @@ func New(address string) (*Client, error) {
 		grpc.WithInsecure(),
 		grpc.WithUnaryInterceptor(grpc_middleware.ChainUnaryClient(
 			otgrpc.OpenTracingClientInterceptor(opentracing.GlobalTracer()),
-			clientUserHeaderInterceptor,
 		)),
 	)
 
