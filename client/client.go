@@ -18,6 +18,8 @@ import (
 
 	"github.com/musicglue/httpgrpc"
 	"github.com/musicglue/httpgrpc/utils"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Client is a http.Handler that forwards the request over gRPC.
@@ -89,6 +91,7 @@ func (c *Client) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	utils.ToHeader(resp.Headers, w.Header())
 	w.WriteHeader(int(resp.Code))
 	if _, err := w.Write(resp.Body); err != nil {
+		log.Errorf("error writing response body: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
