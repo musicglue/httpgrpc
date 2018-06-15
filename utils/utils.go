@@ -8,6 +8,7 @@ import (
 
 var hopHeaders = []string{
 	"Connection",
+	"Content-Length",
 	"Proxy-Connection", // non-standard but still sent by libcurl and rejected by e.g. google
 	"Keep-Alive",
 	"Proxy-Authenticate",
