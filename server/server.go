@@ -9,6 +9,7 @@ import (
 
 	"github.com/musicglue/httpgrpc"
 	"github.com/musicglue/httpgrpc/utils"
+	log "github.com/sirupsen/logrus"
 )
 
 // Server implements HTTPServer.  HTTPServer is a generated interface that gRPC
@@ -44,6 +45,7 @@ func (s Server) Handle(ctx context.Context, r *httpgrpc.HTTPRequest) (*httpgrpc.
 	}
 
 	if recorder.Code/100 == 5 {
+		log.Errorf("recorded response error: %v", recorder.Code)
 		return nil, httpgrpc.ErrorFromHTTPResponse(resp)
 	}
 
