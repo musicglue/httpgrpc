@@ -2,7 +2,6 @@ package server
 
 import (
 	"bytes"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 
@@ -10,6 +9,7 @@ import (
 
 	"github.com/musicglue/httpgrpc"
 	"github.com/musicglue/httpgrpc/utils"
+	"github.com/musicglue/traefik/log"
 )
 
 // Server implements HTTPServer.  HTTPServer is a generated interface that gRPC
@@ -27,7 +27,9 @@ func New(handler http.Handler) *Server {
 
 // Handle implements HTTPServer.
 func (s Server) Handle(ctx context.Context, r *httpgrpc.HTTPRequest) (*httpgrpc.HTTPResponse, error) {
-	req, err := http.NewRequest(r.Method, r.Url, ioutil.NopCloser(bytes.NewReader(r.Body)))
+	log.Infof("body is: '%s'", r.Body)
+
+	req, err := http.NewRequest(r.Method, r.Url, bytes.NewBuffer(r.Body))
 	if err != nil {
 		return nil, err
 	}
