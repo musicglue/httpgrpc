@@ -37,6 +37,7 @@ func (s Server) Handle(ctx context.Context, r *httpgrpc.HTTPRequest) (*httpgrpc.
 	utils.ToHeader(r.Headers, req.Header)
 	req.RequestURI = r.Url
 
+	log.Infof("received body length: %v", len(r.Body))
 	for k, v := range req.Header {
 		log.Infof("received header: %s -> %s", k, v)
 	}

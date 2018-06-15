@@ -7,6 +7,8 @@ import (
 )
 
 var hopHeaders = []string{
+	"Accept-Encoding", // temporarily block
+	"Cookie",          // temporarily block
 	"Connection",
 	"Content-Length",
 	"Proxy-Connection", // non-standard but still sent by libcurl and rejected by e.g. google

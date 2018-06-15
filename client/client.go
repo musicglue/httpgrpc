@@ -18,6 +18,8 @@ import (
 
 	"github.com/musicglue/httpgrpc"
 	"github.com/musicglue/httpgrpc/utils"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Client is a http.Handler that forwards the request over gRPC.
@@ -66,6 +68,8 @@ func (c *Client) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	setXForwardedFor(r)
 	headers := utils.FromHeader(r.Header)
+
+	log.Debugf("sending request with body length: %v", len(body))
 
 	req := &httpgrpc.HTTPRequest{
 		Method:  r.Method,
