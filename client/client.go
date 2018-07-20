@@ -32,6 +32,10 @@ type Client struct {
 	conn      *grpc.ClientConn
 }
 
+var zeroBodyResponseCodes = map[int32]bool{
+	304: true,
+}
+
 // New makes a new Client, given a kubernetes service address.
 func New(address string) (*Client, error) {
 	address, dialOptions, err := ParseURL(address)
@@ -87,9 +91,15 @@ func (c *Client) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	defer resp.Body.Close()
 
 	utils.ToHeader(resp.Headers, w.Header())
 	w.WriteHeader(int(resp.Code))
+
+	if zeroBodyResponseCodes[resp.Code] {
+		return
+	}
+
 	if _, err := w.Write(resp.Body); err != nil {
 		log.Errorf("error writing response body: %s", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
