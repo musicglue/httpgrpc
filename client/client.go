@@ -91,7 +91,6 @@ func (c *Client) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	defer resp.Body.Close()
 
 	utils.ToHeader(resp.Headers, w.Header())
 	w.WriteHeader(int(resp.Code))
